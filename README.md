@@ -58,7 +58,7 @@ src/
 └── presentation/
     └── console.py                           Entry point and dependency wiring
 ```
-\
+
 ## Run locally
 
 Linux / macOS:
@@ -93,3 +93,13 @@ If ROS (or another tool) adds its own pytest plugins through `PYTHONPATH`, run
 ```bash
 python -m src.presentation.console
 ```
+## Business rules and tests
+
+| Rule | Type | Statement | Responsible | Tests |
+|------|------|-----------|-------------|-------|
+| BR1 | Value | ISBN must be a valid ISBN-13 | `ISBN` value object | T1, T2 |
+| BR2 | Identity/State | A BookItem can be borrowed only when AVAILABLE | `BookItem` aggregate root | T3, T4 |
+| BR3 | Invariant | Active borrowings must not exceed the borrowing limit | `BorrowerAccount` aggregate root | T5, T8 |
+| BR4 | Cross-concept | Due date = borrowing date + loan days for the borrower type | `LoanDueDateService` | T6 |
+| BR5 | Follow-up | After a successful borrow, the borrowing is recorded in BorrowerAccount | `BookBorrowed` + `BookBorrowedHandler` | T7, T8 |
+| BR6 | Lookup | The BookItem must exist before borrowing continues | `BookItemRepository` + `BorrowBookApplicationService` | T7 |
