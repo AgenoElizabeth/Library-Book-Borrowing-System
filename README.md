@@ -58,3 +58,38 @@ src/
 └── presentation/
     └── console.py                           Entry point and dependency wiring
 ```
+\
+## Run locally
+
+Linux / macOS:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+```
+
+Windows:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+```
+
+## Test
+
+```bash
+pytest
+```
+
+Saved test output: [evidence/test_output.txt](evidence/test_output.txt).
+
+If ROS (or another tool) adds its own pytest plugins through `PYTHONPATH`, run
+`env -u PYTHONPATH pytest` instead.
+
+## Run the console application
+
+```bash
+python -m src.presentation.console
+```
