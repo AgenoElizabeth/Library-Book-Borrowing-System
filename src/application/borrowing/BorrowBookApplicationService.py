@@ -57,3 +57,13 @@ class BorrowBookApplicationService:
         except ValueError as error:
             # The BookItem is not saved, so it stays AVAILABLE in storage.
             return self._failure(request, str(error))
+        
+         self._book_items.save(book_item)
+        return BorrowBookOutputDTO(
+            success=True,
+            book_item_id=request.book_item_id,
+            student_id=request.student_id,
+            due_date=due_date,
+            message="Book borrowed successfully.",
+            book_title=book_item.title,
+        )
