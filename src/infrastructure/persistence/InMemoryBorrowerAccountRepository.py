@@ -13,3 +13,7 @@ class InMemoryBorrowerAccountRepository(BorrowerAccountRepository):
 
     def __init__(self) -> None:
         self._accounts: dict[str, BorrowerAccount] = {}
+        
+    def find_by_id(self, student_id: str) -> BorrowerAccount | None:
+        account = self._accounts.get(student_id)
+        return deepcopy(account) if account is not None else None
