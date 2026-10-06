@@ -12,3 +12,11 @@ class ReturnBookApplicationService:
     Return Book completes the borrowing that BookBorrowed recorded. It raises no
     Domain Event because the system has exactly one.
     """
+    
+    def __init__(
+        self,
+        book_items: BookItemRepository,
+        borrower_accounts: BorrowerAccountRepository,
+    ) -> None:
+        self._book_items = book_items
+        self._borrower_accounts = borrower_accounts
