@@ -17,3 +17,17 @@ class BorrowBookApplicationService:
     dispatches the Domain Event and saves the result. Every dependency is
     passed in from outside (Dependency Injection).
     """
+    
+    def __init__(
+        self,
+        book_items: BookItemRepository,
+        borrower_accounts: BorrowerAccountRepository,
+        due_date_service: LoanDueDateService,
+        event_handler: DomainEventHandler,
+        today: Callable[[], date] = date.today,
+    ) -> None:
+        self._book_items = book_items
+        self._borrower_accounts = borrower_accounts
+        self._due_date_service = due_date_service
+        self._event_handler = event_handler
+        self._today = today
