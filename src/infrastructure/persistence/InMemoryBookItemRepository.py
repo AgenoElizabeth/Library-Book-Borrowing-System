@@ -13,3 +13,7 @@ class InMemoryBookItemRepository(BookItemRepository):
 
     def __init__(self) -> None:
         self._book_items: dict[str, BookItem] = {}
+        
+    def find_by_id(self, book_item_id: str) -> BookItem | None:
+        book_item = self._book_items.get(book_item_id)
+        return deepcopy(book_item) if book_item is not None else None
