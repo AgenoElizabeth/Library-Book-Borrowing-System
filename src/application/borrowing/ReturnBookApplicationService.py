@@ -29,3 +29,9 @@ class ReturnBookApplicationService:
         account = self._borrower_accounts.find_by_id(request.student_id)
         if account is None:
             return self._failure(request, f"BorrowerAccount {request.student_id} does not exist.")
+        
+        try:
+            account.close_borrowing(request.book_item_id)
+            book_item.return_to_library()
+        except ValueError as error:
+            return self._failure(request, str(error))
