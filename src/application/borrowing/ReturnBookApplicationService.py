@@ -20,3 +20,12 @@ class ReturnBookApplicationService:
     ) -> None:
         self._book_items = book_items
         self._borrower_accounts = borrower_accounts
+        
+    def execute(self, request: ReturnBookInputDTO) -> ReturnBookOutputDTO:
+        book_item = self._book_items.find_by_id(request.book_item_id)
+        if book_item is None:
+            return self._failure(request, f"BookItem {request.book_item_id} does not exist.")
+
+        account = self._borrower_accounts.find_by_id(request.student_id)
+        if account is None:
+            return self._failure(request, f"BorrowerAccount {request.student_id} does not exist.")
