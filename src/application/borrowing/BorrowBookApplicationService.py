@@ -58,7 +58,7 @@ class BorrowBookApplicationService:
             # The BookItem is not saved, so it stays AVAILABLE in storage.
             return self._failure(request, str(error))
         
-         self._book_items.save(book_item)
+        self._book_items.save(book_item)
         return BorrowBookOutputDTO(
             success=True,
             book_item_id=request.book_item_id,
@@ -66,4 +66,14 @@ class BorrowBookApplicationService:
             due_date=due_date,
             message="Book borrowed successfully.",
             book_title=book_item.title,
+        )
+        
+    @staticmethod
+    def _failure(request: BorrowBookInputDTO, message: str) -> BorrowBookOutputDTO:
+        return BorrowBookOutputDTO(
+            success=False,
+            book_item_id=request.book_item_id,
+            student_id=request.student_id,
+            due_date=None,
+            message=message,
         )
