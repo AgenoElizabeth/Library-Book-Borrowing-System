@@ -45,3 +45,12 @@ class ReturnBookApplicationService:
             message="Book returned successfully.",
             book_title=book_item.title,
         )
+        
+    @staticmethod
+    def _failure(request: ReturnBookInputDTO, message: str) -> ReturnBookOutputDTO:
+        return ReturnBookOutputDTO(
+            success=False,
+            book_item_id=request.book_item_id,
+            student_id=request.student_id,
+            message=message,
+        )
