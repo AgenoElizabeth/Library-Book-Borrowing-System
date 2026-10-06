@@ -10,3 +10,10 @@ from src.domain.book_items.repositories.BookItemRepository import BookItemReposi
 from src.domain.borrower_accounts.repositories.BorrowerAccountRepository import BorrowerAccountRepository
 from src.domain.borrower_accounts.services.LoanDueDateService import LoanDueDateService
 
+class BorrowBookApplicationService:
+    """Coordinate the Borrow Book use case.
+
+    The service holds no business rules. It loads aggregates, calls the domain,
+    dispatches the Domain Event and saves the result. Every dependency is
+    passed in from outside (Dependency Injection).
+    """
