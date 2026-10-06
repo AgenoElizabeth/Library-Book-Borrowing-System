@@ -35,3 +35,13 @@ class ReturnBookApplicationService:
             book_item.return_to_library()
         except ValueError as error:
             return self._failure(request, str(error))
+        
+        self._borrower_accounts.save(account)
+        self._book_items.save(book_item)
+        return ReturnBookOutputDTO(
+            success=True,
+            book_item_id=request.book_item_id,
+            student_id=request.student_id,
+            message="Book returned successfully.",
+            book_title=book_item.title,
+        )
