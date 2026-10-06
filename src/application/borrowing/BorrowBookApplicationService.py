@@ -31,3 +31,29 @@ class BorrowBookApplicationService:
         self._due_date_service = due_date_service
         self._event_handler = event_handler
         self._today = today
+        
+    def execute(self, request: BorrowBookInputDTO) -> BorrowBookOutputDTO:
+        # BR6: the BookItem must exist before borrowing continues.
+        book_item = self._book_items.find_by_id(request.book_item_id)
+        if book_item is None:
+            return self._failure(request, f"BookItem {request.book_item_id} does not exist.")
+
+        account = self._borrower_accounts.find_by_id(request.student_id)
+        if account is None:
+            return self._failure(request, f"BorrowerAccount {request.student_id} does not exist.")
+        
+        try:
+            borrowed_on = self._today()
+            # BR4: the Domain Service calculates the due date.
+            due_date = self._due_date_service.calculate_due_date(
+                borrowed_on, account.borrower_type
+            )
+            # BR2: BookItem checks it is AVAILABLE and raises BookBorrowed.
+            book_item.borrow(request.student_id, borrowed_on, due_date)
+            # BR5: in-process event handling. BorrowerAccount checks BR3.
+            for event in book_item.get_domain_events():
+                self._event_handler.handle(event)
+            book_item.clear_domain_events()
+        except ValueError as error:
+            # The BookItem is not saved, so it stays AVAILABLE in storage.
+            return self._failure(request, str(error))
