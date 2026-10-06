@@ -17,3 +17,6 @@ class InMemoryBookItemRepository(BookItemRepository):
     def find_by_id(self, book_item_id: str) -> BookItem | None:
         book_item = self._book_items.get(book_item_id)
         return deepcopy(book_item) if book_item is not None else None
+    
+    def save(self, book_item: BookItem) -> None:
+        self._book_items[book_item.id] = deepcopy(book_item)
