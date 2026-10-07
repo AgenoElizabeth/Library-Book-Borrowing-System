@@ -76,3 +76,11 @@ def test_t7_borrowing_a_book_records_the_borrowing_through_the_event() -> None:
 
     # Act
     result = borrow_book.execute(BorrowBookInputDTO("ST123", "BI001"))
+
+      # Assert
+    assert result.success
+    assert result.due_date == date(2026, 10, 15)
+    assert book_items.find_by_id("BI001").status is BookItemStatus.BORROWED
+    assert [event.book_item_id for event in handler.received_events] == ["BI001"]
+    recorded = borrower_accounts.find_by_id("ST123").active_borrowings
+    assert [borrowing.book_item_id for borrowing in recorded] == ["BI001"]
