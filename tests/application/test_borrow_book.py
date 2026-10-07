@@ -61,3 +61,18 @@ def borrower_with_active_borrowings(limit: int, active: int) -> BorrowerAccount:
     for number in range(active):
         account.record_borrowing(f"OLD{number}", TODAY, date(2026, 10, 15))
     return account
+
+def test_t7_borrowing_a_book_records_the_borrowing_through_the_event() -> None:
+    # T7 - BR5/BR6: the main use case succeeds and BookBorrowed is handled.
+    # Arrange
+    book_items = FakeBookItemRepository(BookItem("BI001", ISBN("978-0132350884")))
+    borrower_accounts = FakeBorrowerAccountRepository(
+        borrower_with_active_borrowings(limit=3, active=0)
+    )
+    handler = RecordingBookBorrowedHandler(borrower_accounts)
+    borrow_book = BorrowBookApplicationService(
+        book_items, borrower_accounts, LoanDueDateService(), handler, today=lambda: TODAY
+    )
+
+    # Act
+    result = borrow_book.execute(BorrowBookInputDTO("ST123", "BI001"))
