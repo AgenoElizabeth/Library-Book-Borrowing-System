@@ -100,3 +100,11 @@ def test_t8_the_borrower_account_rejects_the_follow_up_at_its_limit() -> None:
 
     # Act
     result = borrow_book.execute(BorrowBookInputDTO("ST123", "BI001"))
+
+
+    # Assert
+    assert not result.success
+    assert "has reached the borrowing limit of 5" in result.message
+    assert len(handler.received_events) == 1
+    assert len(borrower_accounts.find_by_id("ST123").active_borrowings) == 5
+    assert book_items.find_by_id("BI001").status is BookItemStatus.AVAILABLE
