@@ -41,3 +41,14 @@ class FakeBorrowerAccountRepository(BorrowerAccountRepository):
 
     def save(self, account: BorrowerAccount) -> None:
         self._accounts[account.id] = deepcopy(account)
+
+class RecordingBookBorrowedHandler(BookBorrowedHandler):
+    """The real handler, which also remembers the events it received."""
+
+    def __init__(self, borrower_accounts: BorrowerAccountRepository) -> None:
+        super().__init__(borrower_accounts)
+        self.received_events: list[BookBorrowed] = []
+
+    def handle(self, event: BookBorrowed) -> None:
+        self.received_events.append(event)
+        super().handle(event)
