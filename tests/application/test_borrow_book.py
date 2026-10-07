@@ -52,3 +52,12 @@ class RecordingBookBorrowedHandler(BookBorrowedHandler):
     def handle(self, event: BookBorrowed) -> None:
         self.received_events.append(event)
         super().handle(event)
+
+TODAY = date(2026, 10, 1)
+
+
+def borrower_with_active_borrowings(limit: int, active: int) -> BorrowerAccount:
+    account = BorrowerAccount("ST123", BorrowerType.STUDENT, borrowing_limit=limit)
+    for number in range(active):
+        account.record_borrowing(f"OLD{number}", TODAY, date(2026, 10, 15))
+    return account
