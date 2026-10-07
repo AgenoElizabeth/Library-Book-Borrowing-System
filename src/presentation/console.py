@@ -69,3 +69,31 @@ def generate_isbn(index: int) -> ISBN:
     total = sum(int(d) * (1 if pos % 2 == 0 else 3) for pos, d in enumerate(prefix))
     check_digit = (10 - (total % 10)) % 10
     return ISBN(f"{prefix}{check_digit}")
+
+def seed_data(book_items: InMemoryBookItemRepository, borrower_accounts: InMemoryBorrowerAccountRepository) -> None:
+    """Seed 100 Computer Science book items and diverse borrower accounts into memory."""
+    for i in range(1, 101):
+        book_id = f"BI{i:03d}"
+        isbn = generate_isbn(i)
+        title = CS_TITLES[(i - 1) % len(CS_TITLES)]
+        book_items.save(BookItem(book_id, isbn, title=title))
+
+    for i in range(1, 11):
+        student_id = f"ST{i:03d}"
+        borrower_accounts.save(BorrowerAccount(student_id, BorrowerType.STUDENT, borrowing_limit=3))
+    borrower_accounts.save(BorrowerAccount("ST123", BorrowerType.STUDENT, borrowing_limit=3))
+
+    for i in range(1, 6):
+        staff_id = f"SF{i:03d}"
+        borrower_accounts.save(BorrowerAccount(staff_id, BorrowerType.STAFF, borrowing_limit=5))
+
+
+def normalize_book_id(raw_input: str) -> str:
+    """Convert flexible input like '1', 'bi1', 'BI5' into standard 'BI001' format."""
+    val = raw_input.strip().upper()
+    if val.isdigit():
+        return f"BI{int(val):03d}"
+    match = re.match(r"^BI(\d+)$", val)
+    if match:
+        return f"BI{int(match.group(1)):03d}"
+    return val    
