@@ -97,3 +97,30 @@ def normalize_book_id(raw_input: str) -> str:
     if match:
         return f"BI{int(match.group(1)):03d}"
     return val    
+
+def normalize_borrower_id(raw_input: str) -> str:
+    """Convert flexible input like '1', 'st1', 'sf2' into standard 'ST001' or 'SF002' format."""
+    val = raw_input.strip().upper()
+    if val.isdigit():
+        return f"ST{int(val):03d}"
+    match_st = re.match(r"^ST(\d+)$", val)
+    if match_st:
+        return f"ST{int(match_st.group(1)):03d}"
+    match_sf = re.match(r"^SF(\d+)$", val)
+    if match_sf:
+        return f"SF{int(match_sf.group(1)):03d}"
+    return val
+
+
+def parse_borrower_type(type_input: str, student_id: str) -> tuple[BorrowerType, int]:
+    """Parse borrower category choice with smart fallback based on ID prefix."""
+    val = type_input.strip().lower()
+    if val in ("2", "staff", "stf", "f", "sf"):
+        return BorrowerType.STAFF, 5
+    if val in ("1", "student", "st", "s"):
+        return BorrowerType.STUDENT, 3
+
+    # Smart fallback based on Borrower ID prefix (SF -> STAFF, ST -> STUDENT)
+    if student_id.upper().startswith("SF"):
+        return BorrowerType.STAFF, 5
+    return BorrowerType.STUDENT, 3
