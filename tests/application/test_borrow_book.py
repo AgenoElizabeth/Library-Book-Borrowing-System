@@ -31,3 +31,13 @@ class FakeBookItemRepository(BookItemRepository):
 
     def save(self, book_item: BookItem) -> None:
         self._book_items[book_item.id] = deepcopy(book_item)
+
+class FakeBorrowerAccountRepository(BorrowerAccountRepository):
+    def __init__(self, *accounts: BorrowerAccount) -> None:
+        self._accounts = {account.id: deepcopy(account) for account in accounts}
+
+    def find_by_id(self, student_id: str) -> BorrowerAccount | None:
+        return deepcopy(self._accounts.get(student_id))
+
+    def save(self, account: BorrowerAccount) -> None:
+        self._accounts[account.id] = deepcopy(account)
