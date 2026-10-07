@@ -84,3 +84,19 @@ def test_t7_borrowing_a_book_records_the_borrowing_through_the_event() -> None:
     assert [event.book_item_id for event in handler.received_events] == ["BI001"]
     recorded = borrower_accounts.find_by_id("ST123").active_borrowings
     assert [borrowing.book_item_id for borrowing in recorded] == ["BI001"]
+
+def test_t8_the_borrower_account_rejects_the_follow_up_at_its_limit() -> None:
+    # T8 - BR3/BR5 (rejection): Aggregate B rejects the follow-up action and
+    # the final state stays consistent.
+    # Arrange
+    book_items = FakeBookItemRepository(BookItem("BI001", ISBN("978-0132350884")))
+    borrower_accounts = FakeBorrowerAccountRepository(
+        borrower_with_active_borrowings(limit=5, active=5)
+    )
+    handler = RecordingBookBorrowedHandler(borrower_accounts)
+    borrow_book = BorrowBookApplicationService(
+        book_items, borrower_accounts, LoanDueDateService(), handler, today=lambda: TODAY
+    )
+
+    # Act
+    result = borrow_book.execute(BorrowBookInputDTO("ST123", "BI001"))
