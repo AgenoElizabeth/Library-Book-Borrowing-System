@@ -139,4 +139,4 @@ python -m src.presentation.console
 
 AI tools were used to assist with understanding DDD concepts, structuring the coursework
 design, and reviewing implementation ideas. All final design and implementation decisions
-were reviewed and understood by the group.
+were reviewed and understood by the group members.
