@@ -10,6 +10,7 @@ from src.domain.book_items.repositories.BookItemRepository import BookItemReposi
 from src.domain.borrower_accounts.repositories.BorrowerAccountRepository import BorrowerAccountRepository
 from src.domain.borrower_accounts.services.LoanDueDateService import LoanDueDateService
 
+
 class BorrowBookApplicationService:
     """Coordinate the Borrow Book use case.
 
@@ -17,7 +18,7 @@ class BorrowBookApplicationService:
     dispatches the Domain Event and saves the result. Every dependency is
     passed in from outside (Dependency Injection).
     """
-    
+
     def __init__(
         self,
         book_items: BookItemRepository,
@@ -31,7 +32,7 @@ class BorrowBookApplicationService:
         self._due_date_service = due_date_service
         self._event_handler = event_handler
         self._today = today
-        
+
     def execute(self, request: BorrowBookInputDTO) -> BorrowBookOutputDTO:
         # BR6: the BookItem must exist before borrowing continues.
         book_item = self._book_items.find_by_id(request.book_item_id)
@@ -41,7 +42,7 @@ class BorrowBookApplicationService:
         account = self._borrower_accounts.find_by_id(request.student_id)
         if account is None:
             return self._failure(request, f"BorrowerAccount {request.student_id} does not exist.")
-        
+
         try:
             borrowed_on = self._today()
             # BR4: the Domain Service calculates the due date.
@@ -57,7 +58,7 @@ class BorrowBookApplicationService:
         except ValueError as error:
             # The BookItem is not saved, so it stays AVAILABLE in storage.
             return self._failure(request, str(error))
-        
+
         self._book_items.save(book_item)
         return BorrowBookOutputDTO(
             success=True,
@@ -67,7 +68,7 @@ class BorrowBookApplicationService:
             message="Book borrowed successfully.",
             book_title=book_item.title,
         )
-        
+
     @staticmethod
     def _failure(request: BorrowBookInputDTO, message: str) -> BorrowBookOutputDTO:
         return BorrowBookOutputDTO(
