@@ -10,6 +10,7 @@ from src.domain.book_items.value_objects.ISBN import ISBN
 def available_book_item() -> BookItem:
     return BookItem("BI001", ISBN("978-0132350884"))
 
+
 def test_t3_an_available_book_item_can_be_borrowed() -> None:
     # T3 - BR2: an AVAILABLE BookItem becomes BORROWED.
     # Arrange
@@ -19,7 +20,8 @@ def test_t3_an_available_book_item_can_be_borrowed() -> None:
     book_item.borrow("ST123", date(2026, 10, 1), date(2026, 10, 15))
 
     # Assert
-    assert book_item.status is BookItemStatus.BORROWED 
+    assert book_item.status is BookItemStatus.BORROWED
+
 
 def test_t4_a_borrowed_book_item_cannot_be_borrowed_again() -> None:
     # T4 - BR2 (rejection): a BORROWED BookItem stays BORROWED.
@@ -33,4 +35,4 @@ def test_t4_a_borrowed_book_item_cannot_be_borrowed_again() -> None:
 
     # Assert
     assert "BookItem BI001 is already borrowed" in str(exception_info.value)
-    assert book_item.status is BookItemStatus.BORROWED   
+    assert book_item.status is BookItemStatus.BORROWED

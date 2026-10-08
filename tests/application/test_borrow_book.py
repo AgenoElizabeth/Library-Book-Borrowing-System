@@ -32,6 +32,7 @@ class FakeBookItemRepository(BookItemRepository):
     def save(self, book_item: BookItem) -> None:
         self._book_items[book_item.id] = deepcopy(book_item)
 
+
 class FakeBorrowerAccountRepository(BorrowerAccountRepository):
     def __init__(self, *accounts: BorrowerAccount) -> None:
         self._accounts = {account.id: deepcopy(account) for account in accounts}
@@ -41,6 +42,7 @@ class FakeBorrowerAccountRepository(BorrowerAccountRepository):
 
     def save(self, account: BorrowerAccount) -> None:
         self._accounts[account.id] = deepcopy(account)
+
 
 class RecordingBookBorrowedHandler(BookBorrowedHandler):
     """The real handler, which also remembers the events it received."""
@@ -53,6 +55,7 @@ class RecordingBookBorrowedHandler(BookBorrowedHandler):
         self.received_events.append(event)
         super().handle(event)
 
+
 TODAY = date(2026, 10, 1)
 
 
@@ -61,6 +64,7 @@ def borrower_with_active_borrowings(limit: int, active: int) -> BorrowerAccount:
     for number in range(active):
         account.record_borrowing(f"OLD{number}", TODAY, date(2026, 10, 15))
     return account
+
 
 def test_t7_borrowing_a_book_records_the_borrowing_through_the_event() -> None:
     # T7 - BR5/BR6: the main use case succeeds and BookBorrowed is handled.
@@ -77,13 +81,14 @@ def test_t7_borrowing_a_book_records_the_borrowing_through_the_event() -> None:
     # Act
     result = borrow_book.execute(BorrowBookInputDTO("ST123", "BI001"))
 
-      # Assert
+    # Assert
     assert result.success
     assert result.due_date == date(2026, 10, 15)
     assert book_items.find_by_id("BI001").status is BookItemStatus.BORROWED
     assert [event.book_item_id for event in handler.received_events] == ["BI001"]
     recorded = borrower_accounts.find_by_id("ST123").active_borrowings
     assert [borrowing.book_item_id for borrowing in recorded] == ["BI001"]
+
 
 def test_t8_the_borrower_account_rejects_the_follow_up_at_its_limit() -> None:
     # T8 - BR3/BR5 (rejection): Aggregate B rejects the follow-up action and
@@ -100,7 +105,6 @@ def test_t8_the_borrower_account_rejects_the_follow_up_at_its_limit() -> None:
 
     # Act
     result = borrow_book.execute(BorrowBookInputDTO("ST123", "BI001"))
-
 
     # Assert
     assert not result.success
