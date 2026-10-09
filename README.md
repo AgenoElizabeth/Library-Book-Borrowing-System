@@ -104,6 +104,9 @@ python -m src.presentation.console
 | BR5 | Follow-up | After a successful borrow, the borrowing is recorded in BorrowerAccount | `BookBorrowed` + `BookBorrowedHandler` | T5, T7, T8 |
 | BR6 | Lookup | The BookItem must exist before borrowing continues | `BookItemRepository` + `BorrowBookApplicationService` | T6, T7 |
 
+Within T1-T6, T1 and T2 are the rejection cases and T3 is the boundary case:
+it accepts the borrowing that brings the account exactly to its limit. T8 separately
+tests Aggregate B rejecting the follow-up after the limit has already been reached.
 The eight coursework tests are marked separately from supplementary tests.
 Run `pytest -m coursework` to execute T1-T8 and reproduce
 [evidence/test_output.txt](evidence/test_output.txt); run `pytest` for the full suite.
@@ -132,8 +135,9 @@ Run `pytest -m coursework` to execute T1-T8 and reproduce
 
 ## TDD evidence (BookItem state rule)
 
-The original TDD cycle used test ID T3; after aligning T1-T6 with BR1-BR6, that
-BookItem test is T2. The historical evidence retains the original test name:
+The current BR2 state-rule test is T2. The original RED/GREEN/REFACTOR outputs
+were captured before T1-T6 were aligned with BR1-BR6, so the archived run text
+and filenames retain the historical T3 label:
 
 1. **RED:** T3 was written first while `BookItem.borrow()` was an empty stub, so the test
    failed: [evidence/tdd_t3_red.txt](evidence/tdd_t3_red.txt)

@@ -86,9 +86,9 @@ def test_t5_book_borrowed_event_requests_borrower_account_follow_up() -> None:
 
 
 @pytest.mark.coursework
-def test_t6_borrowing_requires_an_existing_book_item() -> None:
-    # T6 - BR6: a missing BookItem prevents the use case from continuing.
-    book_items = FakeBookItemRepository()
+def test_t6_borrowing_continues_after_finding_the_book_item() -> None:
+    # T6 - BR6: the repository finds the existing BookItem and the use case proceeds.
+    book_items = FakeBookItemRepository(BookItem("BI001", ISBN("978-0132350884")))
     borrower_accounts = FakeBorrowerAccountRepository(
         borrower_with_active_borrowings(limit=3, active=0)
     )
@@ -97,12 +97,12 @@ def test_t6_borrowing_requires_an_existing_book_item() -> None:
         book_items, borrower_accounts, LoanDueDateService(), handler, today=lambda: TODAY
     )
 
-    result = borrow_book.execute(BorrowBookInputDTO("ST123", "MISSING"))
+    result = borrow_book.execute(BorrowBookInputDTO("ST123", "BI001"))
 
-    assert not result.success
-    assert "BookItem MISSING does not exist" in result.message
-    assert borrower_accounts.find_by_id("ST123").active_borrowings == ()
-    assert handler.received_events == []
+    assert result.success
+    assert book_items.find_by_id("BI001").status is BookItemStatus.BORROWED
+    assert borrower_accounts.find_by_id("ST123").active_borrowings[0].book_item_id == "BI001"
+    assert [event.book_item_id for event in handler.received_events] == ["BI001"]
 
 
 @pytest.mark.coursework

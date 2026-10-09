@@ -23,7 +23,9 @@ are defined in the test suite so application tests do not depend on concrete
 infrastructure adapters.
 
 The eight coursework tests are marked with `coursework`; run `pytest -m coursework`
-to execute only T1-T8. Other tests remain in the suite as supplementary coverage.
+to execute only T1-T8. Within T1-T6, T1 and T2 include rejection cases and T3
+accepts the borrowing that reaches the configured limit. Other tests remain in
+the suite as supplementary coverage.
 
 These folders intentionally have no `__init__.py`: pytest discovers test modules by
 filename and does not require the test directories to be importable packages.

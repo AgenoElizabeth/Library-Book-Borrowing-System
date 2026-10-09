@@ -7,4 +7,9 @@ __pycache__/
 build/
 dist/
 .idea/
-Docs/
+Docs/*
+!Docs/
+Docs/*
+!Docs/Library_Borrowing_System_Coursework.pptx
+!Docs/Library_Borrowing_System_Coursework_updated.pptx
+!Docs/Library_Borrowing_System_Coursework_final.pptx

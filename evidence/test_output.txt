@@ -7,11 +7,11 @@ collecting ... collected 8 items
 
 tests/domain/book_items/value_objects/test_isbn.py::test_t1_isbn_value_rule_accepts_valid_and_rejects_invalid_values PASSED [ 12%]
 tests/domain/book_items/test_book_item.py::test_t2_book_item_state_rule_allows_only_available_items_to_be_borrowed PASSED [ 25%]
-tests/domain/borrower_accounts/test_borrower_account.py::test_t3_borrower_limit_invariant_rejects_an_additional_borrowing PASSED [ 37%]
+tests/domain/borrower_accounts/test_borrower_account.py::test_t3_borrower_limit_invariant_allows_reaching_the_limit PASSED [ 37%]
 tests/domain/borrower_accounts/services/test_loan_due_date_service.py::test_t4_domain_service_calculates_due_dates_by_borrower_type PASSED [ 50%]
 tests/application/test_borrow_book.py::test_t5_book_borrowed_event_requests_borrower_account_follow_up PASSED [ 62%]
-tests/application/test_borrow_book.py::test_t6_borrowing_requires_an_existing_book_item PASSED [ 75%]
+tests/application/test_borrow_book.py::test_t6_borrowing_continues_after_finding_the_book_item PASSED [ 75%]
 tests/application/test_borrow_book.py::test_t7_borrowing_a_book_records_the_borrowing_through_the_event PASSED [ 87%]
 tests/application/test_borrow_book.py::test_t8_the_borrower_account_rejects_the_follow_up_at_its_limit PASSED [100%]
 
-============================== 8 passed in 0.13s ==============================
+============================== 8 passed in 0.12s ==============================
