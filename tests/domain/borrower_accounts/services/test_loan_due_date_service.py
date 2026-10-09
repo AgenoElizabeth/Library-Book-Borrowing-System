@@ -1,11 +1,14 @@
 from datetime import date
 
+import pytest
+
 from src.domain.borrower_accounts.services.LoanDueDateService import LoanDueDateService
 from src.domain.borrower_accounts.value_objects.BorrowerType import BorrowerType
 
 
-def test_t6_the_due_date_depends_on_the_borrowing_date_and_the_loan_policy() -> None:
-    # T6 - BR4: STUDENT loans last 14 days and STAFF loans last 28 days.
+@pytest.mark.coursework
+def test_t4_domain_service_calculates_due_dates_by_borrower_type() -> None:
+    # T4 - BR4: STUDENT loans last 14 days and STAFF loans last 28 days.
     # Arrange
     service = LoanDueDateService()
     borrowed_on = date(2026, 10, 1)

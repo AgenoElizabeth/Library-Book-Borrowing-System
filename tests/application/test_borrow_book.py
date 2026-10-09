@@ -1,6 +1,8 @@
 from copy import deepcopy
 from datetime import date
 
+import pytest
+
 from src.application.borrowing.BookBorrowedHandler import BookBorrowedHandler
 from src.application.borrowing.BorrowBookApplicationService import (
     BorrowBookApplicationService,
@@ -66,6 +68,44 @@ def borrower_with_active_borrowings(limit: int, active: int) -> BorrowerAccount:
     return account
 
 
+@pytest.mark.coursework
+def test_t5_book_borrowed_event_requests_borrower_account_follow_up() -> None:
+    # T5 - BR5: handling BookBorrowed asks Aggregate B to record the borrowing.
+    borrower_accounts = FakeBorrowerAccountRepository(
+        borrower_with_active_borrowings(limit=3, active=0)
+    )
+    handler = BookBorrowedHandler(borrower_accounts)
+    event = BookBorrowed("BI001", "ST123", TODAY, date(2026, 10, 15))
+
+    handler.handle(event)
+
+    recorded = borrower_accounts.find_by_id("ST123").active_borrowings
+    assert [(borrowing.book_item_id, borrowing.due_date) for borrowing in recorded] == [
+        ("BI001", date(2026, 10, 15))
+    ]
+
+
+@pytest.mark.coursework
+def test_t6_borrowing_requires_an_existing_book_item() -> None:
+    # T6 - BR6: a missing BookItem prevents the use case from continuing.
+    book_items = FakeBookItemRepository()
+    borrower_accounts = FakeBorrowerAccountRepository(
+        borrower_with_active_borrowings(limit=3, active=0)
+    )
+    handler = RecordingBookBorrowedHandler(borrower_accounts)
+    borrow_book = BorrowBookApplicationService(
+        book_items, borrower_accounts, LoanDueDateService(), handler, today=lambda: TODAY
+    )
+
+    result = borrow_book.execute(BorrowBookInputDTO("ST123", "MISSING"))
+
+    assert not result.success
+    assert "BookItem MISSING does not exist" in result.message
+    assert borrower_accounts.find_by_id("ST123").active_borrowings == ()
+    assert handler.received_events == []
+
+
+@pytest.mark.coursework
 def test_t7_borrowing_a_book_records_the_borrowing_through_the_event() -> None:
     # T7 - BR5/BR6: the main use case succeeds and BookBorrowed is handled.
     # Arrange
@@ -90,6 +130,7 @@ def test_t7_borrowing_a_book_records_the_borrowing_through_the_event() -> None:
     assert [borrowing.book_item_id for borrowing in recorded] == ["BI001"]
 
 
+@pytest.mark.coursework
 def test_t8_the_borrower_account_rejects_the_follow_up_at_its_limit() -> None:
     # T8 - BR3/BR5 (rejection): Aggregate B rejects the follow-up action and
     # the final state stays consistent.

@@ -97,12 +97,16 @@ python -m src.presentation.console
 
 | Rule | Type | Statement | Responsible | Tests |
 |------|------|-----------|-------------|-------|
-| BR1 | Value | ISBN must be a valid ISBN-13 | `ISBN` value object | T1, T2 |
-| BR2 | Identity/State | A BookItem can be borrowed only when AVAILABLE | `BookItem` aggregate root | T3, T4 |
-| BR3 | Invariant | Active borrowings must not exceed the borrowing limit | `BorrowerAccount` aggregate root | T5, T8 |
-| BR4 | Cross-concept | Due date = borrowing date + loan days for the borrower type | `LoanDueDateService` | T6 |
-| BR5 | Follow-up | After a successful borrow, the borrowing is recorded in BorrowerAccount | `BookBorrowed` + `BookBorrowedHandler` | T7, T8 |
-| BR6 | Lookup | The BookItem must exist before borrowing continues | `BookItemRepository` + `BorrowBookApplicationService` | T7 |
+| BR1 | Value | ISBN must be a valid ISBN-13 | `ISBN` value object | T1 |
+| BR2 | Identity/State | A BookItem can be borrowed only when AVAILABLE | `BookItem` aggregate root | T2 |
+| BR3 | Invariant | Active borrowings must not exceed the borrowing limit | `BorrowerAccount` aggregate root | T3, T8 |
+| BR4 | Cross-concept | Due date = borrowing date + loan days for the borrower type | `LoanDueDateService` | T4 |
+| BR5 | Follow-up | After a successful borrow, the borrowing is recorded in BorrowerAccount | `BookBorrowed` + `BookBorrowedHandler` | T5, T7, T8 |
+| BR6 | Lookup | The BookItem must exist before borrowing continues | `BookItemRepository` + `BorrowBookApplicationService` | T6, T7 |
+
+The eight coursework tests are marked separately from supplementary tests.
+Run `pytest -m coursework` to execute T1-T8 and reproduce
+[evidence/test_output.txt](evidence/test_output.txt); run `pytest` for the full suite.
 
 ## Design decisions
 
@@ -126,7 +130,10 @@ python -m src.presentation.console
 - **Dependency Injection:** repositories, the domain service, the event handler and the
   clock are passed into `BorrowBookApplicationService`. They are wired in `presentation/console.py`.
 
-## TDD evidence (T3)
+## TDD evidence (BookItem state rule)
+
+The original TDD cycle used test ID T3; after aligning T1-T6 with BR1-BR6, that
+BookItem test is T2. The historical evidence retains the original test name:
 
 1. **RED:** T3 was written first while `BookItem.borrow()` was an empty stub, so the test
    failed: [evidence/tdd_t3_red.txt](evidence/tdd_t3_red.txt)

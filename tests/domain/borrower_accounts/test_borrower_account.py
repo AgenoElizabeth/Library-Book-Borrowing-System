@@ -6,8 +6,9 @@ from src.domain.borrower_accounts.BorrowerAccount import BorrowerAccount
 from src.domain.borrower_accounts.value_objects.BorrowerType import BorrowerType
 
 
-def test_t5_a_borrower_at_the_borrowing_limit_cannot_borrow_again() -> None:
-    # T5 - BR3 (boundary): limit 5 with 5 active borrowings rejects a sixth.
+@pytest.mark.coursework
+def test_t3_borrower_limit_invariant_rejects_an_additional_borrowing() -> None:
+    # T3 - BR3 (boundary): limit 5 with 5 active borrowings rejects a sixth.
     # Arrange
     account = BorrowerAccount("ST123", BorrowerType.STUDENT, borrowing_limit=5)
     for number in range(1, 6):
